@@ -53,11 +53,12 @@ def process_prompt():
             "view_count": view_count,
             "final_score":final_score 
         })
-    filtered_data=[]
+    videos_playlist=""
     metadata.sort(key=lambda x: x["final_score"], reverse=True)
     for video in metadata[:20]:
-        filtered_data.append(video)
-    return jsonify({"search_query":search_query,"user_needs":user_needs,"filtered_videos":filtered_data})
+        videos_playlist+=(","+video["url"].split("v=")[-1])
+    playlist= "https://www.youtube.com/watch_videos?video_ids=AoDXlOQxyYk"+videos_playlist
+    return jsonify({"search_query":search_query,"user_needs":user_needs,"playlist":playlist})
 
 if __name__=='__main__':
     app.run(host='0.0.0.0',port=5000)

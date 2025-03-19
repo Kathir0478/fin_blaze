@@ -57,7 +57,7 @@ def process_prompt():
     metadata.sort(key=lambda x: x["final_score"], reverse=True)
     for video in metadata[:20]:
         videos_playlist+=(","+video["url"].split("v=")[-1])
-    playlist= "https://www.youtube.com/watch_videos?video_ids=AoDXlOQxyYk"+videos_playlist
+    playlist= "https://www.youtube.com/watch_videos?video_ids=2f1bw_VJ0MI"+videos_playlist
     return jsonify({"search_query":search_query,"user_needs":user_needs,"playlist":playlist})
 
 if __name__=='__main__':

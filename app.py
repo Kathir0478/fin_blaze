@@ -36,6 +36,7 @@ def process_prompt():
         search_results = ydl.extract_info(f"ytsearch250:{search_query}", download=False)
 
     metadata=[]
+    seen_vid=set()
     for video in search_results.get("entries",[]):
         title= video.get("title","").lower()
         view_count= video.get("view_count", 0)
@@ -43,10 +44,11 @@ def process_prompt():
         vectorizer=CountVectorizer().fit_transform([user_needs,title])
         similarity_matrix=cosine_similarity(vectorizer)
         title_similarity_score=similarity_matrix[0][1]
-        if "shorts/" in url:
+        if "shorts/" in url or url in seen_vid:
             continue
         normalized_view_count = np.log1p(view_count) / 10 
         final_score = (0.8 * title_similarity_score) + (0.2 * normalized_view_count)
+        seen_vid.add(url)
         metadata.append({
             "title": video.get("title", "Unknown Title"),
             "url": url,
@@ -58,7 +60,7 @@ def process_prompt():
     for video in metadata[:20]:
         videos_playlist+=(","+video["url"].split("v=")[-1])
     playlist= "https://www.youtube.com/watch_videos?video_ids=2f1bw_VJ0MI"+videos_playlist
-    return jsonify({"search_query":search_query,"user_needs":user_needs,"playlist":playlist})
+    return jsonify({"playlist":playlist})
 
 if __name__=='__main__':
     app.run(host='0.0.0.0',port=5000)
